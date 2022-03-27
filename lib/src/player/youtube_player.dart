@@ -3,8 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/scheduler.dart';
 
 import '../enums/thumbnail_quality.dart';
 import '../utils/errors.dart';
@@ -42,7 +40,7 @@ import 'raw_youtube_player.dart';
 ///
 class YoutubePlayer extends StatefulWidget {
   /// Sets [Key] as an identification to underlying web view associated to the player.
-  final Key? key;
+  final Key? keys;
 
   /// A [YoutubePlayerController] to control the player.
   final YoutubePlayerController controller;
@@ -135,9 +133,10 @@ class YoutubePlayer extends StatefulWidget {
 
   /// Creates [YoutubePlayer] widget.
   const YoutubePlayer({
+    Key? key,
     Color? progressIndicatorColor,
     ProgressBarColors? progressColors,
-    this.key,
+    this.keys,
     required this.controller,
     this.width,
     this.aspectRatio = 16 / 9,
@@ -153,7 +152,8 @@ class YoutubePlayer extends StatefulWidget {
     required this.fullscreenButton,
     this.showVideoProgressIndicator = false,
   })  : progressColors = progressColors ?? const ProgressBarColors(),
-        progressIndicatorColor = progressIndicatorColor ?? Colors.red;
+        progressIndicatorColor = progressIndicatorColor ?? Colors.red,
+        super(key: key);
 
   /// Converts fully qualified YouTube Url to video id.
   ///
@@ -201,7 +201,6 @@ class _YoutubePlayerState extends State<YoutubePlayer> {
     super.initState();
     controller = widget.controller..addListener(listener);
     _aspectRatio = widget.aspectRatio;
-    
   }
 
   @override
@@ -305,7 +304,7 @@ class _YoutubePlayerState extends State<YoutubePlayer> {
                     MediaQuery.of(context).size.height
                 : 1,
             child: RawYoutubePlayer(
-              key: widget.key,
+              keys: widget.key,
               onEnded: (YoutubeMetaData metaData) {
                 if (controller.flags.loop) {
                   controller.load(controller.metadata.videoId,
@@ -371,14 +370,20 @@ class _YoutubePlayerState extends State<YoutubePlayer> {
                           children: widget.bottomActions ??
                               [
                                 const SizedBox(width: 14.0),
-                                CurrentPosition(),
+                                const CurrentPosition(),
                                 const SizedBox(width: 8.0),
                                 ProgressBar(
                                   isExpanded: true,
                                   colors: widget.progressColors,
                                 ),
-                                RemainingDuration(),
-                                widget.fullscreenButton!
+                                const RemainingDuration(),
+                                widget.fullscreenButton ??
+                                    const SizedBox(
+                                      child: Text(
+                                        'Empty Widget',
+                                        style: TextStyle(color: Colors.red),
+                                      ),
+                                    ),
                               ],
                         ),
                       ),
@@ -404,7 +409,7 @@ class _YoutubePlayerState extends State<YoutubePlayer> {
             ),
           ],
           if (!controller.flags.hideControls)
-            Center(
+            const Center(
               child: PlayPauseButton(),
             ),
           if (controller.value.hasError) errorWidget,

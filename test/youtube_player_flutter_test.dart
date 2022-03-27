@@ -1,7 +1,5 @@
 import 'dart:io';
 import 'dart:ui' show window;
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -43,6 +41,7 @@ Widget buildPlayer({
         progressIndicatorColor: progressIndicatorColor,
         thumbnail: thumbnail,
         topActions: topActions,
+        fullscreenButton: null,
       ),
     ),
   );
@@ -71,10 +70,11 @@ class TestApp extends StatelessWidget {
   final Widget child;
   final TextDirection textDirection;
 
-  TestApp({
+  const TestApp({
+    Key? key,
     this.textDirection = TextDirection.ltr,
     required this.child,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +95,7 @@ class TestApp extends StatelessWidget {
   }
 }
 
-R provideMockedNetworkImages<R>(R body()) {
+R provideMockedNetworkImages<R>(R Function() body) {
   return HttpOverrides.runZoned(
     body,
     createHttpClient: (_) => _createMockImageHttpClient(_, _transparentImage),
@@ -118,7 +118,7 @@ MockHttpClient _createMockImageHttpClient(
   final response = MockHttpClientResponse();
   final headers = MockHttpHeaders();
 
-  registerFallbackValue<Uri>(Uri());
+  registerFallbackValue(Uri());
   when(() => client.getUrl(any<Uri>()))
       .thenAnswer((_) => Future<HttpClientRequest>.value(request));
   when(() => request.headers).thenReturn(headers);

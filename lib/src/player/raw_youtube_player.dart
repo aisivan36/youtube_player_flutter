@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 import '../enums/player_state.dart';
@@ -15,16 +14,17 @@ import '../utils/youtube_player_controller.dart';
 /// Use [YoutubePlayer] instead.
 class RawYoutubePlayer extends StatefulWidget {
   /// Sets [Key] as an identification to underlying web view associated to the player.
-  final Key? key;
+  final Key? keys;
 
   /// {@macro youtube_player_flutter.onEnded}
   final void Function(YoutubeMetaData metaData)? onEnded;
 
   /// Creates a [RawYoutubePlayer] widget.
-  RawYoutubePlayer({
-    this.key,
+  const RawYoutubePlayer({
+    Key? key,
     this.onEnded,
-  });
+    this.keys,
+  }) : super(key: key);
 
   @override
   _RawYoutubePlayerState createState() => _RawYoutubePlayerState();

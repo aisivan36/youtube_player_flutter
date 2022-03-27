@@ -17,9 +17,10 @@ class PlaybackSpeedButton extends StatefulWidget {
 
   /// Creates [PlaybackSpeedButton] widget.
   const PlaybackSpeedButton({
+    Key? key,
     this.controller,
     this.icon,
-  });
+  }) : super(key: key);
 
   @override
   _PlaybackSpeedButtonState createState() => _PlaybackSpeedButtonState();
